@@ -5,6 +5,7 @@ const MODE_LABELS = {
     base_destruction: 'Base Destruction',
     survival: 'Survival Horde'
 };
+
 const ARENA_IDS = ['alpha_ring', 'geometric_cross', 'nebula_gauntlet'];
 const ARENA_LABELS = {
     alpha_ring: 'Alpha Ring',
@@ -12,10 +13,33 @@ const ARENA_LABELS = {
     nebula_gauntlet: 'Nebula Gauntlet'
 };
 
+const ROSTER_IDS = ['easy', 'medium', 'hard', 'mixed', 'mayhem', 'phantom', 'blitzer', 'flanker'];
+const ROSTER_LABELS = {
+    easy:    'Easy',
+    medium:  'Medium',
+    hard:    'Hard',
+    mixed:   'Mixed',
+    mayhem:  'Mayhem',
+    phantom: 'Phantom',
+    blitzer: 'Blitzer',
+    flanker: 'Flanker',
+};
+const ROSTER_DESCS = {
+    easy:    'Slow aim, predictable — good for learning',
+    medium:  'Balanced challenge for most players',
+    hard:    'Precise aim, shot prediction, relentless',
+    mixed:   'Random variety — each bot plays differently',
+    mayhem:  'Anything goes — specialists included',
+    phantom: 'Stays at extreme range, waits for the perfect shot',
+    blitzer: 'All-out assault — never stops, never retreats',
+    flanker: 'Gets to your blind side, attacks the angle you ignore',
+};
+
 export class LobbyScreen {
     constructor() {
         this.humanCount = 1;
         this.botCount = 3;
+        this.botRoster = 'medium';
         this.mode = 'ffa';
         this.arenaId = 'alpha_ring';
         this.menuIndex = 0;
@@ -36,6 +60,15 @@ export class LobbyScreen {
                 label: 'BOTS',
                 get: () => this.botCount,
                 change: d => { this.botCount = Math.max(0, Math.min(6, this.botCount + d)); }
+            },
+            {
+                label: 'BOT AI',
+                get:  () => ROSTER_LABELS[this.botRoster],
+                desc: () => ROSTER_DESCS[this.botRoster],
+                change: d => {
+                    const i = ROSTER_IDS.indexOf(this.botRoster);
+                    this.botRoster = ROSTER_IDS[(i + d + ROSTER_IDS.length) % ROSTER_IDS.length];
+                }
             },
             {
                 label: 'MODE',
@@ -65,6 +98,7 @@ export class LobbyScreen {
         return {
             humanCount: this.humanCount,
             botCount: this.botCount,
+            botRoster: this.botRoster,
             mode: this.mode,
             arenaId: this.arenaId
         };
@@ -110,7 +144,7 @@ export class LobbyScreen {
             const y = startY + i * lineH;
             const selected = i === this.menuIndex;
             const color = selected ? '#00ff88' : '#446655';
-            const glow = selected ? 12 : 0;
+            const glow  = selected ? 12 : 0;
 
             renderer.drawGlowText(item.label, w / 2 - 140, y, color, 10, 'left', glow);
 
@@ -130,6 +164,11 @@ export class LobbyScreen {
                 ctx.shadowBlur = 6;
                 ctx.strokeRect(w / 2 - 155, y - 18, 360, 36);
                 ctx.restore();
+
+                // Show description for items that have one
+                if (item.desc) {
+                    renderer.drawText(item.desc(), w / 2 + 20, y + 24, '#446644', 5, 'left');
+                }
             }
         });
 

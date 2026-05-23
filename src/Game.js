@@ -168,11 +168,10 @@ export class Game {
                 this.tanks.push(tank);
             }
             for (let i = 0; i < this.gameConfig.botCount; i++) {
-                const bi = i % BotAI.PERSONALITIES.length;
                 const color = BOT_COLORS[i % BOT_COLORS.length];
                 const idx = this.gameConfig.humanCount + i;
                 const tank = new Tank(-1, startingHull, this.weaponConfigs, spawns[idx] || Vector2.zero(), color, BOT_NAMES[i]);
-                tank.botConfig = BotAI.PERSONALITIES[bi];
+                tank.botConfig = BotAI.pickBotConfig(this.gameConfig.botRoster);
                 this.economy.initTank(tank);
                 if (this.gameConfig.mode === 'team') tank.team = (i % 2 === 0) ? 'blue' : 'red';
                 this.tanks.push(tank);
@@ -313,7 +312,7 @@ export class Game {
         for (const tank of this.tanks) {
             if (tank.playerIndex < 0 && !tank.alive) {
                 const aggMult = 1 + this.waveNumber * 0.1;
-                const cfg = BotAI.PERSONALITIES[Math.floor(Math.random() * BotAI.PERSONALITIES.length)];
+                const cfg = BotAI.pickBotConfig(this.gameConfig.botRoster);
                 const spawn = this.arena.getSpawnPoints(1)[0];
                 const hull = this.hullConfigs.find(h => h.id === 'medium_assault');
                 tank.respawn(spawn);
