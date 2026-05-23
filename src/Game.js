@@ -13,6 +13,12 @@ import { ShopScreen } from './ui/ShopScreen.js';
 import { IntermissionScreen } from './ui/IntermissionScreen.js';
 import { GameOverScreen } from './ui/GameOverScreen.js';
 import { WelcomeScreen } from './ui/WelcomeScreen.js';
+import { Vortex } from './arenas/Vortex.js';
+import { TheDivide } from './arenas/TheDivide.js';
+import { RubbleField } from './arenas/RubbleField.js';
+import { Catacombs } from './arenas/Catacombs.js';
+import { IonCross } from './arenas/IonCross.js';
+import { HexCell } from './arenas/HexCell.js';
 
 const GameState = {
     WELCOME: 'WELCOME',
@@ -196,7 +202,13 @@ export class Game {
         switch (id) {
             case 'geometric_cross': return new GeometricCross(cx, cy, r);
             case 'nebula_gauntlet': return new NebulaGauntlet(cx, cy, r);
-            default: return new AlphaRing(cx, cy, r);
+            case 'vortex':          return new Vortex(cx, cy, r);
+            case 'the_divide':      return new TheDivide(cx, cy, r);
+            case 'rubble_field':    return new RubbleField(cx, cy, r);
+            case 'catacombs':       return new Catacombs(cx, cy, r);
+            case 'ion_cross':       return new IonCross(cx, cy, r);
+            case 'hex_cell':        return new HexCell(cx, cy, r);
+            default:                return new AlphaRing(cx, cy, r);
         }
     }
 

@@ -6,11 +6,20 @@ const MODE_LABELS = {
     survival: 'Survival Horde'
 };
 
-const ARENA_IDS = ['alpha_ring', 'geometric_cross', 'nebula_gauntlet'];
+const ARENA_IDS = [
+    'alpha_ring', 'geometric_cross', 'nebula_gauntlet',
+    'vortex', 'the_divide', 'rubble_field', 'catacombs', 'ion_cross', 'hex_cell',
+];
 const ARENA_LABELS = {
-    alpha_ring: 'Alpha Ring',
+    alpha_ring:      'Alpha Ring',
     geometric_cross: 'Geometric Cross',
-    nebula_gauntlet: 'Nebula Gauntlet'
+    nebula_gauntlet: 'Nebula Gauntlet',
+    vortex:          'Vortex',
+    the_divide:      'The Divide',
+    rubble_field:    'Rubble Field',
+    catacombs:       'Catacombs',
+    ion_cross:       'Ion Cross',
+    hex_cell:        'Hex Cell',
 };
 
 const ROSTER_IDS = ['easy', 'medium', 'hard', 'mixed', 'mayhem', 'phantom', 'blitzer', 'flanker'];
