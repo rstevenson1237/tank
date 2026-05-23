@@ -10,11 +10,24 @@ export class HUD {
         ctx.restore();
 
         const humanTanks = tanks.filter(t => t.playerIndex >= 0);
-        const colW = w / Math.max(humanTanks.length, 1);
+        const count = humanTanks.length;
+
+        // For 2+ players, anchor P1 to the left edge and the last player to the right
+        // edge, leaving the center strip clear for the round/mode display.
+        let panelW, getPanelX;
+        if (count <= 1) {
+            panelW = w;
+            getPanelX = () => 0;
+        } else if (count === 2) {
+            panelW = Math.floor(w * 0.40);
+            getPanelX = i => i === 0 ? 0 : w - panelW;
+        } else {
+            panelW = Math.floor(w / count);
+            getPanelX = i => i * panelW;
+        }
 
         humanTanks.forEach((tank, i) => {
-            const x = i * colW;
-            this.#drawPlayerPanel(renderer, tank, x, colW);
+            this.#drawPlayerPanel(renderer, tank, getPanelX(i), panelW);
         });
 
         renderer.drawText(`ROUND ${roundNumber}`, w / 2, 32, '#888888', 8, 'center');
