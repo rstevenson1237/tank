@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>D-Zone — Destruction Zone</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      background: #0a0a0c;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #game {
+      display: block;
+      cursor: none;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      max-width: 100vw;
+      max-height: 100vh;
+    }
+
+    #loading {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #0a0a0c;
+      color: #00ff88;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 14px;
+      gap: 20px;
+      z-index: 10;
+    }
+
+    #loading .title {
+      font-size: 28px;
+      text-shadow: 0 0 30px #00ff88;
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+
+    #loading .sub { color: #335544; font-size: 8px; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div id="loading">
+    <div class="title">D-ZONE</div>
+    <div>Loading...</div>
+    <div class="sub">DESTRUCTION ZONE — a tribute to Julian Cochran's 1992 classic</div>
+  </div>
+  <canvas id="game"></canvas>
+  <script type="module" src="src/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const loading = document.getElementById('loading');
+        if (loading) loading.style.display = 'none';
+      }, 800);
+    });
+  </script>
+</body>
+</html>

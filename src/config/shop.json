@@ -1,0 +1,117 @@
+{
+  "cashOnKill": 150,
+  "cashOnWin": 100,
+  "cashOnAssist": 50,
+  "startingCash": 200,
+  "winKillLimit": 10,
+  "items": [
+    {
+      "id": "shield_capacitor",
+      "label": "Shield Cap",
+      "description": "+20% max shields",
+      "cost": 200,
+      "maxLevel": 3,
+      "type": "upgrade",
+      "upgradeKey": "shieldCapacitor"
+    },
+    {
+      "id": "energy_overclocker",
+      "label": "Energy OC",
+      "description": "+25% energy regen rate",
+      "cost": 250,
+      "maxLevel": 3,
+      "type": "upgrade",
+      "upgradeKey": "energyOverclocker"
+    },
+    {
+      "id": "engine_thruster",
+      "label": "Thrusters",
+      "description": "+15% speed & acceleration",
+      "cost": 220,
+      "maxLevel": 3,
+      "type": "upgrade",
+      "upgradeKey": "engineThruster"
+    },
+    {
+      "id": "radar_scanner",
+      "label": "Radar",
+      "description": "Off-screen enemy arrows",
+      "cost": 300,
+      "maxLevel": 1,
+      "type": "upgrade",
+      "upgradeKey": "radarScanner"
+    },
+    {
+      "id": "auto_repair",
+      "label": "Nanites",
+      "description": "Regen shields if undamaged 5s",
+      "cost": 350,
+      "maxLevel": 1,
+      "type": "upgrade",
+      "upgradeKey": "autoRepair"
+    },
+    {
+      "id": "buy_plasma_bolt",
+      "label": "Plasma Bolt",
+      "description": "Add plasma bolt to arsenal",
+      "cost": 100,
+      "maxLevel": 1,
+      "type": "weapon",
+      "weaponId": "plasma_bolt"
+    },
+    {
+      "id": "buy_shrapnel",
+      "label": "Shrapnel",
+      "description": "Add reflective shrapnel",
+      "cost": 120,
+      "maxLevel": 1,
+      "type": "weapon",
+      "weaponId": "reflective_shrapnel"
+    },
+    {
+      "id": "buy_seeker",
+      "label": "Seeker Missile",
+      "description": "Add homing seeker missile",
+      "cost": 200,
+      "maxLevel": 1,
+      "type": "weapon",
+      "weaponId": "seeker_missile"
+    },
+    {
+      "id": "buy_mortar",
+      "label": "Heavy Mortar",
+      "description": "Add AOE heavy mortar",
+      "cost": 250,
+      "maxLevel": 1,
+      "type": "weapon",
+      "weaponId": "heavy_mortar"
+    },
+    {
+      "id": "buy_nuke",
+      "label": "THE NUKE",
+      "description": "The ultimate weapon",
+      "cost": 800,
+      "maxLevel": 1,
+      "type": "weapon",
+      "weaponId": "the_nuke"
+    },
+    {
+      "id": "hull_light",
+      "label": "Light Scout Hull",
+      "description": "Fast but very fragile",
+      "cost": 300,
+      "maxLevel": 1,
+      "type": "hull",
+      "hullId": "light_scout"
+    },
+    {
+      "id": "hull_heavy",
+      "label": "Heavy Dreadnought",
+      "description": "Massive shields, slow speed",
+      "cost": 500,
+      "maxLevel": 1,
+      "type": "hull",
+      "hullId": "heavy_dreadnought"
+    }
+  ]
+}
