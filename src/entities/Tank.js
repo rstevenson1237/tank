@@ -130,17 +130,12 @@ export class Tank {
         const dir = Vector2.fromAngle(this.heading);
 
         if (input.thrust) {
-            const force = dir.scale(stats.acceleration * dt);
-            this.velocity = this.velocity.add(force);
+            this.velocity = this.velocity.add(dir.scale(stats.acceleration * dt));
+        } else if (input.brake) {
+            this.velocity = this.velocity.add(dir.scale(-stats.acceleration * 0.6 * dt));
         }
 
-        if (input.brake) {
-            const friction = Math.pow(1 - this.brakeFriction, dt);
-            this.velocity = this.velocity.scale(friction);
-        } else {
-            const friction = Math.pow(1 - this.idleFriction, dt);
-            this.velocity = this.velocity.scale(friction);
-        }
+        this.velocity = this.velocity.scale(Math.pow(1 - this.idleFriction, dt));
 
         const speed = this.velocity.length();
         if (speed > stats.maxSpeed) {

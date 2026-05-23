@@ -1,12 +1,12 @@
 import { Vector2 } from '../math/Vector2.js';
 
 const PERSONALITIES = [
-    { id: 'rusher',    aggression: 0.9, aimVariance: 0.15, weaponBias: ['plasma_bolt', 'vector_laser'],   predicts: false },
-    { id: 'sniper',    aggression: 0.4, aimVariance: 0.04, weaponBias: ['vector_laser'],                  predicts: true  },
-    { id: 'support',   aggression: 0.3, aimVariance: 0.20, weaponBias: ['seeker_missile'],                predicts: false },
-    { id: 'berserker', aggression: 1.0, aimVariance: 0.30, weaponBias: ['heavy_mortar', 'the_nuke'],      predicts: false },
-    { id: 'coward',    aggression: 0.1, aimVariance: 0.25, weaponBias: ['reflective_shrapnel'],           predicts: false },
-    { id: 'balanced',  aggression: 0.6, aimVariance: 0.12, weaponBias: [],                               predicts: true  },
+    { id: 'rusher',    aggression: 0.9, aimVariance: 0.15, weaponBias: ['plasma_bolt', 'vector_laser'],   predicts: false, movement: 'charge' },
+    { id: 'sniper',    aggression: 0.4, aimVariance: 0.04, weaponBias: ['vector_laser'],                  predicts: true,  movement: 'orbit'  },
+    { id: 'support',   aggression: 0.3, aimVariance: 0.20, weaponBias: ['seeker_missile'],                predicts: false, movement: 'orbit'  },
+    { id: 'berserker', aggression: 1.0, aimVariance: 0.30, weaponBias: ['heavy_mortar', 'the_nuke'],      predicts: false, movement: 'charge' },
+    { id: 'coward',    aggression: 0.1, aimVariance: 0.25, weaponBias: ['reflective_shrapnel'],           predicts: false, movement: 'evade'  },
+    { id: 'balanced',  aggression: 0.6, aimVariance: 0.12, weaponBias: [],                               predicts: true,  movement: 'orbit'  },
 ];
 
 export class BotAI {
@@ -24,7 +24,10 @@ export class BotAI {
                 target: null,
                 wanderAngle: Math.random() * Math.PI * 2,
                 wanderTimer: 0,
-                fireDelayTimer: 0
+                fireDelayTimer: 0,
+                orbitAngle: Math.random() * Math.PI * 2,
+                jinkTimer: 0,
+                jinkDir: 1
             });
         }
         return this.#botState.get(tank);
@@ -52,23 +55,46 @@ export class BotAI {
             aimPos = target.position;
         }
 
-        const toAim = aimPos.sub(tank.position);
-        const distance = toAim.length();
+        const toTarget = target.position.sub(tank.position);
+        const idealDist = 150 + cfg.aggression * 80;
+        const movement = cfg.movement || 'charge';
 
+        const toAim = aimPos.sub(tank.position);
         const variance = (Math.random() - 0.5) * 2 * cfg.aimVariance;
         const aimAngle = toAim.angle() + variance;
-        const desiredAngle = aimAngle;
-        const angleDiff = this.#wrapAngle(desiredAngle - tank.heading);
+        const aimDiff = this.#wrapAngle(aimAngle - tank.heading);
 
-        const rotateLeft = angleDiff < -0.05;
-        const rotateRight = angleDiff > 0.05;
+        let moveTarget = target.position;
+        if (movement === 'orbit') {
+            state.orbitAngle += 0.8 * dt;
+            moveTarget = target.position.add(Vector2.fromAngle(state.orbitAngle).scale(idealDist));
+        } else if (movement === 'evade') {
+            const retreatDir = tank.position.sub(target.position).normalized();
+            moveTarget = tank.position.add(retreatDir.scale(200));
+        } else if (movement === 'charge') {
+            state.jinkTimer -= dt;
+            if (state.jinkTimer <= 0) {
+                state.jinkDir = state.jinkDir === 1 ? -1 : 1;
+                state.jinkTimer = 0.4 + Math.random() * 0.6;
+            }
+            if (toTarget.length() > 0.001) {
+                moveTarget = target.position.add(toTarget.perp().normalized().scale(state.jinkDir * 60));
+            }
+        }
 
-        const idealDist = 150 + cfg.aggression * 80;
-        const thrust = distance > idealDist * 0.6;
-        const brake = distance < idealDist * 0.3 && cfg.aggression < 0.7;
+        const toMove = moveTarget.sub(tank.position);
+        const moveDist = toMove.length();
+        const moveDiff = this.#wrapAngle(toMove.angle() - tank.heading);
+
+        const steerAngle = cfg.aggression > 0.5 ? aimDiff : moveDiff;
+        const rotateLeft = steerAngle < -0.05;
+        const rotateRight = steerAngle > 0.05;
+
+        const thrust = moveDist > idealDist * 0.55;
+        const brake = moveDist < idealDist * 0.3;
 
         state.fireDelayTimer -= dt;
-        const aimAccuracy = Math.abs(angleDiff);
+        const aimAccuracy = Math.abs(aimDiff);
         const canFire = aimAccuracy < 0.35 + cfg.aimVariance && state.fireDelayTimer <= 0;
 
         let fire = false;

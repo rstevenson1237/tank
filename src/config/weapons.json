@@ -3,7 +3,7 @@
     {
       "id": "light_scout",
       "label": "Light Scout",
-      "size": 16,
+      "size": 8,
       "maxSpeed": 240,
       "acceleration": 420,
       "brakeFriction": 0.3,
@@ -19,7 +19,7 @@
     {
       "id": "medium_assault",
       "label": "Medium Assault",
-      "size": 22,
+      "size": 11,
       "maxSpeed": 180,
       "acceleration": 320,
       "brakeFriction": 0.25,
@@ -35,7 +35,7 @@
     {
       "id": "heavy_dreadnought",
       "label": "Heavy Dreadnought",
-      "size": 30,
+      "size": 15,
       "maxSpeed": 110,
       "acceleration": 200,
       "brakeFriction": 0.18,

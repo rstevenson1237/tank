@@ -101,7 +101,7 @@ export class LobbyScreen {
 
         renderer.drawGlowText('D-ZONE', w / 2, h * 0.18, `rgba(0,255,136,${pulse})`, 52, 'center', 30);
         renderer.drawText('DESTRUCTION ZONE', w / 2, h * 0.18 + 50, '#444444', 9, 'center');
-        renderer.drawText('W/S: navigate   A/D or Q/E: change   SPACE: select', w / 2, h * 0.18 + 72, '#333333', 6, 'center');
+        renderer.drawText('W/S or ↑↓: navigate   A/D or ←→: change   SPACE/ENTER: select', w / 2, h * 0.18 + 72, '#333333', 6, 'center');
 
         const startY = h * 0.38;
         const lineH = 52;

@@ -12,8 +12,10 @@ import { LobbyScreen } from './ui/LobbyScreen.js';
 import { ShopScreen } from './ui/ShopScreen.js';
 import { IntermissionScreen } from './ui/IntermissionScreen.js';
 import { GameOverScreen } from './ui/GameOverScreen.js';
+import { WelcomeScreen } from './ui/WelcomeScreen.js';
 
 const GameState = {
+    WELCOME: 'WELCOME',
     LOBBY: 'LOBBY',
     COMBAT_ROUND: 'COMBAT_ROUND',
     INTERMISSION: 'INTERMISSION',
@@ -45,8 +47,9 @@ export class Game {
         this.intermission = new IntermissionScreen();
         this.shop = new ShopScreen(this.economy);
         this.gameOver = new GameOverScreen();
+        this.welcome = new WelcomeScreen();
 
-        this.state = GameState.LOBBY;
+        this.state = GameState.WELCOME;
         this.roundNumber = 0;
         this.gameTime = 0;
         this.flashAlpha = 0;
@@ -69,7 +72,7 @@ export class Game {
     #rafId;
 
     start() {
-        this.state = GameState.LOBBY;
+        this.state = GameState.WELCOME;
         this.#rafId = requestAnimationFrame(ts => this.#loop(ts));
     }
 
@@ -87,6 +90,7 @@ export class Game {
 
     #update(dt) {
         switch (this.state) {
+            case GameState.WELCOME: this.#updateWelcome(dt); break;
             case GameState.LOBBY: this.#updateLobby(dt); break;
             case GameState.COMBAT_ROUND: this.#updateCombat(dt); break;
             case GameState.INTERMISSION: this.#updateIntermission(dt); break;
@@ -98,6 +102,7 @@ export class Game {
     #render() {
         this.renderer.clear();
         switch (this.state) {
+            case GameState.WELCOME: this.#renderWelcome(); break;
             case GameState.LOBBY: this.#renderLobby(); break;
             case GameState.COMBAT_ROUND: this.#renderCombat(); break;
             case GameState.INTERMISSION: this.#renderIntermission(); break;
@@ -106,9 +111,23 @@ export class Game {
         }
     }
 
+    #updateWelcome(dt) {
+        if (this.input.anyJustPressed()) {
+            this.state = GameState.LOBBY;
+        }
+    }
+
     #updateLobby(dt) {
         const p1 = this.input.getPlayerInput(0);
-        if (p1) this.lobby.handleInput(p1);
+        if (p1) {
+            p1.thrustJP      = p1.thrustJP      || this.input.isJustPressed('ArrowUp');
+            p1.brakeJP       = p1.brakeJP       || this.input.isJustPressed('ArrowDown');
+            p1.rotateLeftJP  = p1.rotateLeftJP  || this.input.isJustPressed('ArrowLeft');
+            p1.rotateRightJP = p1.rotateRightJP || this.input.isJustPressed('ArrowRight');
+            p1.fire          = p1.fire           || this.input.isJustPressed('Enter')
+                                                 || this.input.isJustPressed('NumpadEnter');
+            this.lobby.handleInput(p1);
+        }
         if (this.lobby.ready) {
             this.lobby.ready = false;
             this.#startGame(this.lobby.config);
@@ -388,6 +407,11 @@ export class Game {
                 }
             }
         }
+    }
+
+    #renderWelcome() {
+        this.#drawBackground();
+        this.welcome.draw(this.renderer, this.gameTime);
     }
 
     #renderLobby() {
