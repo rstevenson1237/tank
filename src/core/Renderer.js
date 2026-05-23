@@ -1,4 +1,4 @@
-const FONT_SCALE = 1.25;
+const FONT_SCALE = 2.0;
 
 export class Renderer {
     constructor(canvas) {
