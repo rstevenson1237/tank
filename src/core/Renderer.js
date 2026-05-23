@@ -1,3 +1,5 @@
+const FONT_SCALE = 1.25;
+
 export class Renderer {
     constructor(canvas) {
         this.canvas = canvas;
@@ -56,7 +58,7 @@ export class Renderer {
 
     drawText(text, x, y, color = '#00ff88', size = 12, align = 'left') {
         this.ctx.save();
-        this.ctx.font = `400 ${size}px 'Orbitron', sans-serif`;
+        this.ctx.font = `400 ${Math.round(size * FONT_SCALE)}px 'Orbitron', sans-serif`;
         this.ctx.fillStyle = color;
         this.ctx.textAlign = align;
         this.ctx.textBaseline = 'middle';
@@ -66,7 +68,7 @@ export class Renderer {
 
     drawGlowText(text, x, y, color = '#00ff88', size = 12, align = 'left', blur = 10) {
         this.ctx.save();
-        this.ctx.font = `700 ${size}px 'Orbitron', sans-serif`;
+        this.ctx.font = `700 ${Math.round(size * FONT_SCALE)}px 'Orbitron', sans-serif`;
         this.ctx.fillStyle = color;
         this.ctx.textAlign = align;
         this.ctx.textBaseline = 'middle';
@@ -76,7 +78,7 @@ export class Renderer {
     }
 
     measureText(text, size = 12) {
-        this.ctx.font = `400 ${size}px 'Orbitron', sans-serif`;
+        this.ctx.font = `400 ${Math.round(size * FONT_SCALE)}px 'Orbitron', sans-serif`;
         return this.ctx.measureText(text).width;
     }
 
