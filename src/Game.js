@@ -261,6 +261,29 @@ export class Game {
             }
         }
 
+        // Tank-tank collision: separate overlapping tanks and exchange momentum
+        for (let i = 0; i < this.tanks.length; i++) {
+            for (let j = i + 1; j < this.tanks.length; j++) {
+                const a = this.tanks[i], b = this.tanks[j];
+                if (!a.alive || !b.alive) continue;
+                const delta = b.position.sub(a.position);
+                const dist = delta.length();
+                const minDist = a.size + b.size;
+                if (dist < minDist && dist > 0) {
+                    const n = delta.scale(1 / dist);
+                    const overlap = (minDist - dist) * 0.5;
+                    a.position = a.position.sub(n.scale(overlap));
+                    b.position = b.position.add(n.scale(overlap));
+                    const vRel = a.velocity.sub(b.velocity).dot(n);
+                    if (vRel > 0) {
+                        const impulse = vRel * 0.7;
+                        a.velocity = a.velocity.sub(n.scale(impulse));
+                        b.velocity = b.velocity.add(n.scale(impulse));
+                    }
+                }
+            }
+        }
+
         for (let i = this.projectiles.length - 1; i >= 0; i--) {
             const proj = this.projectiles[i];
             proj.update(dt, this.tanks, this.arena);

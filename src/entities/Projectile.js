@@ -53,33 +53,43 @@ export class Projectile {
         this.trail.push(this.position.clone());
         if (this.trail.length > this.config.trailLength) this.trail.shift();
 
-        this.position = this.position.add(this.velocity.scale(dt));
+        // Sub-step movement so fast projectiles can't tunnel through thin walls.
+        // Each sub-step moves at most one projectile-radius, keeping every sample
+        // point inside the wall collision zone (2 * radius wide).
+        const projRadius = this.config.size || 3;
+        const totalDist = this.velocity.length() * dt;
+        const steps = Math.max(1, Math.ceil(totalDist / projRadius));
+        const subDt = dt / steps;
 
-        const wallResult = arena.constrainProjectile(this.position, this.config.size || 3);
-        if (wallResult.hit) {
-            if (this.bouncesLeft > 0) {
-                this.velocity = this.velocity.reflect(wallResult.normal);
-                this.position = wallResult.position;
-                this.bouncesLeft--;
-            } else {
-                if (this.config.aoeRadius > 0) this.#triggerAoe(tanks);
-                this.alive = false;
-                return;
-            }
-        }
+        for (let s = 0; s < steps; s++) {
+            this.position = this.position.add(this.velocity.scale(subDt));
 
-        for (const tank of tanks) {
-            if (!tank.alive) continue;
-            if (tank === this.owner && this.hitOwnerCooldown > 0) continue;
-            const dist = this.position.distanceTo(tank.position);
-            if (dist < tank.size + (this.config.size || 3)) {
-                if (this.config.aoeRadius > 0) {
-                    this.#triggerAoe(tanks);
+            const wallResult = arena.constrainProjectile(this.position, projRadius);
+            if (wallResult.hit) {
+                if (this.bouncesLeft > 0) {
+                    this.velocity = this.velocity.reflect(wallResult.normal);
+                    this.position = wallResult.position;
+                    this.bouncesLeft--;
                 } else {
-                    tank.takeDamage(this.config.damage, this.config.shieldPenetration, this.owner);
+                    if (this.config.aoeRadius > 0) this.#triggerAoe(tanks);
+                    this.alive = false;
+                    return;
                 }
-                this.alive = false;
-                return;
+            }
+
+            for (const tank of tanks) {
+                if (!tank.alive) continue;
+                if (tank === this.owner && this.hitOwnerCooldown > 0) continue;
+                const dist = this.position.distanceTo(tank.position);
+                if (dist < tank.size + projRadius) {
+                    if (this.config.aoeRadius > 0) {
+                        this.#triggerAoe(tanks);
+                    } else {
+                        tank.takeDamage(this.config.damage, this.config.shieldPenetration, this.owner);
+                    }
+                    this.alive = false;
+                    return;
+                }
             }
         }
     }
