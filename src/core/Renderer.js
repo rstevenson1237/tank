@@ -56,7 +56,7 @@ export class Renderer {
 
     drawText(text, x, y, color = '#00ff88', size = 12, align = 'left') {
         this.ctx.save();
-        this.ctx.font = `${size}px 'Press Start 2P', monospace`;
+        this.ctx.font = `400 ${size}px 'Orbitron', sans-serif`;
         this.ctx.fillStyle = color;
         this.ctx.textAlign = align;
         this.ctx.textBaseline = 'middle';
@@ -66,7 +66,7 @@ export class Renderer {
 
     drawGlowText(text, x, y, color = '#00ff88', size = 12, align = 'left', blur = 10) {
         this.ctx.save();
-        this.ctx.font = `${size}px 'Press Start 2P', monospace`;
+        this.ctx.font = `700 ${size}px 'Orbitron', sans-serif`;
         this.ctx.fillStyle = color;
         this.ctx.textAlign = align;
         this.ctx.textBaseline = 'middle';
@@ -76,7 +76,7 @@ export class Renderer {
     }
 
     measureText(text, size = 12) {
-        this.ctx.font = `${size}px 'Press Start 2P', monospace`;
+        this.ctx.font = `400 ${size}px 'Orbitron', sans-serif`;
         return this.ctx.measureText(text).width;
     }
 
