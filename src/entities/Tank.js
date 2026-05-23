@@ -142,6 +142,8 @@ export class Tank {
             this.velocity = this.velocity.scale(stats.maxSpeed / speed);
         }
 
+        this.position = this.position.add(this.velocity.scale(dt));
+
         if (input.weaponPrev) this.#cycleWeapon(-1);
         if (input.weaponNext) this.#cycleWeapon(1);
 
