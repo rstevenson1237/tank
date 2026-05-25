@@ -13,6 +13,13 @@ export class Arena {
         return this.constrainPosition(pos, radius);
     }
 
+    // Outer boundary check only — used by wall-phasing projectiles that ignore
+    // internal geometry but still respect the arena edge. All subclasses set
+    // this.radius in their constructors.
+    constrainBoundary(pos, radius) {
+        return Arena.constrainToCircle(pos, radius, this.center.x, this.center.y, this.radius, true);
+    }
+
     getSpawnPoints(count) {
         throw new Error('Abstract');
     }

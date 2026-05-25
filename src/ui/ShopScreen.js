@@ -1,31 +1,64 @@
+const ROW_H = 44;
+const START_Y = 188;
+const DONE_H = 55;
+
 export class ShopScreen {
     constructor(economySystem) {
         this.economy = economySystem;
         this.playerSelections = [];
         this.playerReady = [];
         this.allReady = false;
+        this.#scrollOffsets = [];
     }
+
+    #scrollOffsets;
 
     init(humanTanks) {
         this.tanks = humanTanks;
         this.playerSelections = humanTanks.map(() => 0);
         this.playerReady = humanTanks.map(() => false);
+        this.#scrollOffsets = humanTanks.map(() => 0);
         this.allReady = false;
         this.itemLists = humanTanks.map(t => this.economy.getAvailableItems(t));
     }
 
-    handleInput(playerIndex, input, hullConfigs) {
+    #visibleCount(canvasH) {
+        return Math.max(4, Math.floor((canvasH - START_Y - DONE_H) / ROW_H));
+    }
+
+    #clampScroll(playerIndex, canvasH) {
+        const items = this.itemLists[playerIndex];
+        const vis = this.#visibleCount(canvasH);
+        const max = Math.max(0, items.length - vis);
+        this.#scrollOffsets[playerIndex] = Math.max(0, Math.min(max, this.#scrollOffsets[playerIndex]));
+    }
+
+    handleInput(playerIndex, input, hullConfigs, canvasH = 720) {
         if (playerIndex >= this.tanks.length) return;
         if (this.playerReady[playerIndex]) return;
 
         const items = this.itemLists[playerIndex];
         const sel = this.playerSelections[playerIndex];
+        const vis = this.#visibleCount(canvasH);
 
         if (input.weaponPrev || input.rotateLeftJP) {
-            this.playerSelections[playerIndex] = Math.max(0, sel - 1);
+            const newSel = Math.max(0, sel - 1);
+            this.playerSelections[playerIndex] = newSel;
+            if (newSel < this.#scrollOffsets[playerIndex]) {
+                this.#scrollOffsets[playerIndex] = newSel;
+            }
         } else if (input.weaponNext || input.rotateRightJP) {
-            this.playerSelections[playerIndex] = Math.min(items.length, sel + 1);
+            const newSel = Math.min(items.length, sel + 1);
+            this.playerSelections[playerIndex] = newSel;
+            // Scroll down when selection goes below the visible window.
+            // The DONE button lives at index items.length; keep it visible.
+            const lastVisible = this.#scrollOffsets[playerIndex] + vis - 1;
+            if (newSel > lastVisible && newSel < items.length) {
+                this.#scrollOffsets[playerIndex]++;
+            }
         }
+
+        this.#clampScroll(playerIndex, canvasH);
 
         if (input.fire) {
             if (sel >= items.length) {
@@ -36,8 +69,9 @@ export class ShopScreen {
                 if (item && !item.owned && this.economy.canAfford(this.tanks[playerIndex], item.id)) {
                     this.economy.applyPurchase(this.tanks[playerIndex], item.id, hullConfigs);
                     this.itemLists[playerIndex] = this.economy.getAvailableItems(this.tanks[playerIndex]);
-                    if (this.playerSelections[playerIndex] >= this.itemLists[playerIndex].length) {
-                        this.playerSelections[playerIndex] = Math.max(0, this.itemLists[playerIndex].length - 1);
+                    this.#clampScroll(playerIndex, canvasH);
+                    if (this.playerSelections[playerIndex] > this.itemLists[playerIndex].length) {
+                        this.playerSelections[playerIndex] = this.itemLists[playerIndex].length;
                     }
                 }
             }
@@ -54,11 +88,11 @@ export class ShopScreen {
 
         const colW = w / this.tanks.length;
         this.tanks.forEach((tank, pi) => {
-            this.#drawPlayerColumn(renderer, tank, pi, colW, t);
+            this.#drawPlayerColumn(renderer, tank, pi, colW, t, h);
         });
     }
 
-    #drawPlayerColumn(renderer, tank, pi, colW, t) {
+    #drawPlayerColumn(renderer, tank, pi, colW, t, canvasH) {
         const ctx = renderer.context;
         const x = pi * colW;
         const pad = 18;
@@ -70,7 +104,7 @@ export class ShopScreen {
         if (pi > 0) {
             ctx.beginPath();
             ctx.moveTo(x, 90);
-            ctx.lineTo(x, renderer.height);
+            ctx.lineTo(x, canvasH);
             ctx.stroke();
         }
         ctx.restore();
@@ -86,16 +120,23 @@ export class ShopScreen {
 
         const items = this.itemLists[pi] || [];
         const sel = this.playerSelections[pi];
-        const startY = 188;
-        const rowH = 44;
+        const vis = this.#visibleCount(canvasH);
+        const scroll = this.#scrollOffsets[pi];
+        const visibleItems = items.slice(scroll, scroll + vis);
 
-        const ctx2 = renderer.context;
+        // Scroll indicator
+        if (items.length > vis) {
+            const scrollText = `${scroll + 1}–${Math.min(scroll + vis, items.length)} of ${items.length}`;
+            renderer.drawText(scrollText, x + colW - pad, START_Y - 14, '#334433', 5, 'right');
+            if (scroll > 0) renderer.drawText('▲', x + colW / 2, START_Y - 14, '#446644', 6, 'center');
+            if (scroll + vis < items.length) renderer.drawText('▼', x + colW / 2, START_Y + vis * ROW_H + 8, '#446644', 6, 'center');
+        }
 
-        items.forEach((item, i) => {
-            const iy = startY + i * rowH;
-            const isSel = i === sel && !ready;
+        visibleItems.forEach((item, visI) => {
+            const actualIdx = visI + scroll;
+            const iy = START_Y + visI * ROW_H;
+            const isSel = actualIdx === sel && !ready;
             const owned = item.owned;
-            const canBuy = item.affordable && !owned;
 
             let textColor = '#556655';
             if (owned) textColor = '#334433';
@@ -104,15 +145,15 @@ export class ShopScreen {
             if (isSel) textColor = '#00ff88';
 
             if (isSel) {
-                ctx2.save();
-                ctx2.fillStyle = 'rgba(0,255,136,0.08)';
-                ctx2.strokeStyle = '#00ff88';
-                ctx2.lineWidth = 1;
-                ctx2.shadowColor = '#00ff88';
-                ctx2.shadowBlur = 4;
-                ctx2.fillRect(x + pad - 4, iy - 14, colW - pad * 2 + 8, rowH - 4);
-                ctx2.strokeRect(x + pad - 4, iy - 14, colW - pad * 2 + 8, rowH - 4);
-                ctx2.restore();
+                ctx.save();
+                ctx.fillStyle = 'rgba(0,255,136,0.08)';
+                ctx.strokeStyle = '#00ff88';
+                ctx.lineWidth = 1;
+                ctx.shadowColor = '#00ff88';
+                ctx.shadowBlur = 4;
+                ctx.fillRect(x + pad - 4, iy - 14, colW - pad * 2 + 8, ROW_H - 4);
+                ctx.strokeRect(x + pad - 4, iy - 14, colW - pad * 2 + 8, ROW_H - 4);
+                ctx.restore();
             }
 
             renderer.drawText(item.label, x + pad, iy, textColor, 7, 'left');
@@ -121,7 +162,7 @@ export class ShopScreen {
             renderer.drawText(item.description, x + pad, iy + 14, '#334433', 5, 'left');
         });
 
-        const doneY = startY + items.length * rowH;
+        const doneY = START_Y + Math.min(visibleItems.length, vis) * ROW_H + (items.length > vis ? 16 : 0);
         const isDoneSel = sel >= items.length && !ready;
 
         if (ready) {

@@ -162,19 +162,26 @@ export class Tank {
     }
 
     tryFire() {
-        if (this.fireCooldown > 0 || !this.alive) return null;
+        if (this.fireCooldown > 0 || !this.alive) return [];
         const weapon = this.activeWeapon;
-        if (!weapon) return null;
+        if (!weapon) return [];
 
-        if (weapon.energyCost > 0 && this.energy < weapon.energyCost) return null;
+        if (weapon.energyCost > 0 && this.energy < weapon.energyCost) return [];
 
         this.energy = Math.max(0, this.energy - weapon.energyCost);
         this.fireCooldown = weapon.cooldown;
 
         const muzzleOffset = this.size + (weapon.size || 3) + 2;
-        const startPos = this.position.add(Vector2.fromAngle(this.heading).scale(muzzleOffset));
-        const proj = new Projectile(this, weapon, startPos, Vector2.fromAngle(this.heading));
-        return proj;
+        const muzzlePos = this.position.add(Vector2.fromAngle(this.heading).scale(muzzleOffset));
+        const spreadCount = weapon.spreadCount || 1;
+        const spreadAngle = weapon.spreadAngle || 0;
+
+        const projs = [];
+        for (let i = 0; i < spreadCount; i++) {
+            const angleOffset = spreadCount > 1 ? (i - (spreadCount - 1) / 2) * spreadAngle : 0;
+            projs.push(new Projectile(this, weapon, muzzlePos, Vector2.fromAngle(this.heading + angleOffset)));
+        }
+        return projs;
     }
 
     takeDamage(amount, shieldPenetration = 0, attacker = null) {

@@ -8,7 +8,7 @@
     {
       "id": "shield_capacitor",
       "label": "Shield Cap",
-      "description": "+20% max shields",
+      "description": "+20% max shields per level",
       "cost": 200,
       "maxLevel": 3,
       "type": "upgrade",
@@ -17,7 +17,7 @@
     {
       "id": "energy_overclocker",
       "label": "Energy OC",
-      "description": "+25% energy regen rate",
+      "description": "+25% energy regen per level",
       "cost": 250,
       "maxLevel": 3,
       "type": "upgrade",
@@ -26,7 +26,7 @@
     {
       "id": "engine_thruster",
       "label": "Thrusters",
-      "description": "+15% speed & acceleration",
+      "description": "+15% speed & accel per level",
       "cost": 220,
       "maxLevel": 3,
       "type": "upgrade",
@@ -51,51 +51,6 @@
       "upgradeKey": "autoRepair"
     },
     {
-      "id": "buy_plasma_bolt",
-      "label": "Plasma Bolt",
-      "description": "Add plasma bolt to arsenal",
-      "cost": 100,
-      "maxLevel": 1,
-      "type": "weapon",
-      "weaponId": "plasma_bolt"
-    },
-    {
-      "id": "buy_shrapnel",
-      "label": "Shrapnel",
-      "description": "Add reflective shrapnel",
-      "cost": 120,
-      "maxLevel": 1,
-      "type": "weapon",
-      "weaponId": "reflective_shrapnel"
-    },
-    {
-      "id": "buy_seeker",
-      "label": "Seeker Missile",
-      "description": "Add homing seeker missile",
-      "cost": 200,
-      "maxLevel": 1,
-      "type": "weapon",
-      "weaponId": "seeker_missile"
-    },
-    {
-      "id": "buy_mortar",
-      "label": "Heavy Mortar",
-      "description": "Add AOE heavy mortar",
-      "cost": 250,
-      "maxLevel": 1,
-      "type": "weapon",
-      "weaponId": "heavy_mortar"
-    },
-    {
-      "id": "buy_nuke",
-      "label": "THE NUKE",
-      "description": "The ultimate weapon",
-      "cost": 800,
-      "maxLevel": 1,
-      "type": "weapon",
-      "weaponId": "the_nuke"
-    },
-    {
       "id": "hull_light",
       "label": "Light Scout Hull",
       "description": "Fast but very fragile",
@@ -112,6 +67,132 @@
       "maxLevel": 1,
       "type": "hull",
       "hullId": "heavy_dreadnought"
+    },
+    {
+      "id": "buy_pulse_cannon",
+      "label": "Pulse Cannon",
+      "description": "Rapid-fire energy bursts",
+      "cost": 130,
+      "maxLevel": 1,
+      "type": "weapon",
+      "weaponId": "pulse_cannon"
+    },
+    {
+      "id": "buy_scatter_shot",
+      "label": "Scatter Shot",
+      "description": "3-way burst, deadly close-range",
+      "cost": 160,
+      "maxLevel": 1,
+      "type": "weapon",
+      "weaponId": "scatter_shot"
+    },
+    {
+      "id": "buy_plasma_bolt",
+      "label": "Plasma Bolt",
+      "description": "Medium damage neon bolt",
+      "cost": 100,
+      "maxLevel": 1,
+      "type": "weapon",
+      "weaponId": "plasma_bolt"
+    },
+    {
+      "id": "buy_ricochet_cannon",
+      "label": "Ricochet Cannon",
+      "description": "8-bounce ricocheting shell",
+      "cost": 210,
+      "maxLevel": 1,
+      "type": "weapon",
+      "weaponId": "ricochet_cannon"
+    },
+    {
+      "id": "buy_shrapnel",
+      "label": "Shrapnel",
+      "description": "4-bounce reflective shrapnel",
+      "cost": 120,
+      "maxLevel": 1,
+      "type": "weapon",
+      "weaponId": "reflective_shrapnel"
+    },
+    {
+      "id": "buy_plasma_burst",
+      "label": "Plasma Burst",
+      "description": "Plasma bolt with AOE splash",
+      "cost": 230,
+      "maxLevel": 1,
+      "type": "weapon",
+      "weaponId": "plasma_burst"
+    },
+    {
+      "id": "buy_phase_lance",
+      "label": "Phase Lance",
+      "description": "Phases through all obstacles",
+      "cost": 290,
+      "maxLevel": 1,
+      "type": "weapon",
+      "weaponId": "phase_lance"
+    },
+    {
+      "id": "buy_seeker",
+      "label": "Seeker Missile",
+      "description": "Homing missile, high energy cost",
+      "cost": 200,
+      "maxLevel": 1,
+      "type": "weapon",
+      "weaponId": "seeker_missile"
+    },
+    {
+      "id": "buy_vortex_torpedo",
+      "label": "Vortex Torpedo",
+      "description": "Homing torpedo with AOE blast",
+      "cost": 340,
+      "maxLevel": 1,
+      "type": "weapon",
+      "weaponId": "vortex_torpedo"
+    },
+    {
+      "id": "buy_mortar",
+      "label": "Heavy Mortar",
+      "description": "Slow AOE shell, bypasses shields",
+      "cost": 250,
+      "maxLevel": 1,
+      "type": "weapon",
+      "weaponId": "heavy_mortar"
+    },
+    {
+      "id": "buy_mine_layer",
+      "label": "Mine Layer",
+      "description": "Proximity-triggered AOE mine",
+      "cost": 460,
+      "maxLevel": 1,
+      "type": "weapon",
+      "weaponId": "mine_layer"
+    },
+    {
+      "id": "buy_inferno_missile",
+      "label": "Inferno Missile",
+      "description": "Fast homing with massive AOE",
+      "cost": 480,
+      "maxLevel": 1,
+      "type": "weapon",
+      "weaponId": "inferno_missile"
+    },
+    {
+      "id": "buy_overcharge_bolt",
+      "label": "Overcharge Bolt",
+      "description": "Massive hull damage, bypasses shields",
+      "cost": 520,
+      "maxLevel": 1,
+      "type": "weapon",
+      "weaponId": "overcharge_bolt"
+    },
+    {
+      "id": "buy_nuke",
+      "label": "THE NUKE",
+      "description": "Full energy drain, vaporizes all",
+      "cost": 800,
+      "maxLevel": 1,
+      "type": "weapon",
+      "weaponId": "the_nuke"
     }
   ]
 }

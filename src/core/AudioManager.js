@@ -50,21 +50,68 @@ export class AudioManager {
 
     playLaser() { this.#tone(1200, 'square', 0.1, 0.3); }
 
+    playPulse() { this.#tone(1000, 'square', 0.07, 0.25); }
+
+    playScatter() {
+        this.#tone(800, 'sawtooth', 0.08, 0.3);
+        this.#tone(700, 'sawtooth', 0.08, 0.25, 0.03);
+        this.#tone(900, 'sawtooth', 0.08, 0.2, 0.06);
+    }
+
     playPlasma() {
         this.#tone(300, 'sawtooth', 0.2, 0.4);
         this.#tone(500, 'sine', 0.15, 0.2, 0.05);
     }
 
+    playPlasmaBurst() {
+        this.#tone(280, 'sawtooth', 0.22, 0.4);
+        this.#tone(520, 'sine', 0.18, 0.25, 0.04);
+        this.#noise(0.15, 0.2);
+    }
+
     playShrapnel() { this.#tone(900, 'triangle', 0.15, 0.35); }
+
+    playRicochet() {
+        this.#tone(1100, 'triangle', 0.10, 0.3);
+        this.#tone(950, 'triangle', 0.10, 0.2, 0.05);
+    }
+
+    playPhaseLance() {
+        this.#tone(2200, 'sine', 0.05, 0.2);
+        this.#tone(1800, 'sine', 0.12, 0.25, 0.02);
+    }
 
     playMissile() {
         this.#tone(200, 'sawtooth', 0.3, 0.4);
         this.#tone(180, 'sawtooth', 0.3, 0.3, 0.1);
     }
 
+    playVortex() {
+        this.#tone(180, 'sawtooth', 0.35, 0.4);
+        this.#tone(220, 'sine', 0.25, 0.3, 0.08);
+        this.#tone(160, 'sawtooth', 0.3, 0.3, 0.15);
+    }
+
+    playInferno() {
+        this.#tone(160, 'sawtooth', 0.4, 0.45);
+        this.#noise(0.2, 0.25);
+        this.#tone(140, 'sawtooth', 0.35, 0.35, 0.1);
+    }
+
     playMortar() {
         this.#tone(100, 'sawtooth', 0.3, 0.5);
         this.#tone(80, 'sine', 0.4, 0.4, 0.05);
+    }
+
+    playMineDeploy() {
+        this.#tone(400, 'triangle', 0.15, 0.3);
+        this.#tone(300, 'triangle', 0.2, 0.25, 0.1);
+    }
+
+    playOvercharge() {
+        this.#tone(60, 'sawtooth', 0.5, 0.55);
+        this.#tone(50, 'sine', 0.6, 0.45, 0.05);
+        this.#noise(0.3, 0.35);
     }
 
     playExplosion() { this.#noise(0.4, 0.6); }
@@ -117,12 +164,21 @@ export class AudioManager {
 
     getWeaponSound(weaponId) {
         const map = {
-            vector_laser: () => this.playLaser(),
-            plasma_bolt: () => this.playPlasma(),
-            reflective_shrapnel: () => this.playShrapnel(),
-            seeker_missile: () => this.playMissile(),
-            heavy_mortar: () => this.playMortar(),
-            the_nuke: () => this.playNuke()
+            vector_laser:       () => this.playLaser(),
+            pulse_cannon:       () => this.playPulse(),
+            scatter_shot:       () => this.playScatter(),
+            plasma_bolt:        () => this.playPlasma(),
+            plasma_burst:       () => this.playPlasmaBurst(),
+            ricochet_cannon:    () => this.playRicochet(),
+            reflective_shrapnel:() => this.playShrapnel(),
+            phase_lance:        () => this.playPhaseLance(),
+            seeker_missile:     () => this.playMissile(),
+            vortex_torpedo:     () => this.playVortex(),
+            inferno_missile:    () => this.playInferno(),
+            heavy_mortar:       () => this.playMortar(),
+            mine_layer:         () => this.playMineDeploy(),
+            overcharge_bolt:    () => this.playOvercharge(),
+            the_nuke:           () => this.playNuke()
         };
         return map[weaponId] || (() => this.playLaser());
     }

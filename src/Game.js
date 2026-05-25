@@ -243,10 +243,12 @@ export class Game {
                 if (weapon && weapon.energyCost > 0 && tank.energy < weapon.energyCost) {
                     if (this.audio.ready && tank.playerIndex >= 0) this.audio.playEnergyWarning();
                 } else {
-                    const proj = tank.tryFire();
-                    if (proj) {
-                        proj.findTarget(this.tanks);
-                        this.projectiles.push(proj);
+                    const projs = tank.tryFire();
+                    if (projs.length > 0) {
+                        for (const proj of projs) {
+                            proj.findTarget(this.tanks);
+                            this.projectiles.push(proj);
+                        }
                         if (this.audio.ready) this.audio.getWeaponSound(weapon.id)();
                     }
                 }
@@ -421,7 +423,7 @@ export class Game {
         const humans = this.tanks.filter(t => t.playerIndex >= 0);
         humans.forEach((tank, i) => {
             const inp = this.input.getPlayerInput(tank.playerIndex);
-            if (inp) this.shop.handleInput(i, inp, this.hullConfigs);
+            if (inp) this.shop.handleInput(i, inp, this.hullConfigs, this.renderer.height);
         });
         if (this.shop.allReady) {
             this.#startRound();

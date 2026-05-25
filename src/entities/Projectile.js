@@ -11,7 +11,7 @@ export class Projectile {
         this.bouncesLeft = config.bouncesLeft;
         this.target = null;
         this.trail = [];
-        this.hitOwnerCooldown = 0.15;
+        this.hitOwnerCooldown = config.ownerCooldown ?? 0.15;
     }
 
     findTarget(tanks) {
@@ -64,16 +64,30 @@ export class Projectile {
         for (let s = 0; s < steps; s++) {
             this.position = this.position.add(this.velocity.scale(subDt));
 
-            const wallResult = arena.constrainProjectile(this.position, projRadius);
-            if (wallResult.hit) {
-                if (this.bouncesLeft > 0) {
-                    this.velocity = this.velocity.reflect(wallResult.normal);
-                    this.position = wallResult.position;
-                    this.bouncesLeft--;
-                } else {
+            if (this.config.wallPhasing) {
+                // Phase weapons ignore internal geometry; only the outer boundary kills them.
+                const bound = arena.constrainBoundary(this.position, projRadius);
+                if (bound.hit) {
                     if (this.config.aoeRadius > 0) this.#triggerAoe(tanks);
                     this.alive = false;
                     return;
+                }
+            } else {
+                const wallResult = arena.constrainProjectile(this.position, projRadius);
+                if (wallResult.hit) {
+                    if (this.bouncesLeft > 0) {
+                        this.velocity = this.velocity.reflect(wallResult.normal);
+                        this.position = wallResult.position;
+                        this.bouncesLeft--;
+                    } else if (this.config.proximityTrigger > 0) {
+                        // Mines stop at walls rather than detonating on contact.
+                        this.velocity = Vector2.zero();
+                        this.position = wallResult.position;
+                    } else {
+                        if (this.config.aoeRadius > 0) this.#triggerAoe(tanks);
+                        this.alive = false;
+                        return;
+                    }
                 }
             }
 
@@ -81,7 +95,11 @@ export class Projectile {
                 if (!tank.alive) continue;
                 if (tank === this.owner && this.hitOwnerCooldown > 0) continue;
                 const dist = this.position.distanceTo(tank.position);
-                if (dist < tank.size + projRadius) {
+                // Proximity mines use their trigger radius; all others use direct contact.
+                const hitRange = this.config.proximityTrigger > 0
+                    ? this.config.proximityTrigger
+                    : tank.size + projRadius;
+                if (dist < hitRange) {
                     if (this.config.aoeRadius > 0) {
                         this.#triggerAoe(tanks);
                     } else {
@@ -142,6 +160,17 @@ export class Projectile {
             ctx.beginPath();
             ctx.arc(this.position.x, this.position.y, (this.config.size || 3) * 2.5, 0, Math.PI * 2);
             ctx.fill();
+        }
+
+        if (this.config.proximityTrigger > 0) {
+            ctx.strokeStyle = this.config.color;
+            ctx.globalAlpha = 0.18 + 0.10 * Math.sin(this.age * 5);
+            ctx.lineWidth = 1;
+            ctx.shadowBlur = 6;
+            ctx.shadowColor = this.config.color;
+            ctx.beginPath();
+            ctx.arc(this.position.x, this.position.y, this.config.proximityTrigger, 0, Math.PI * 2);
+            ctx.stroke();
         }
 
         ctx.restore();
