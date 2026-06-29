@@ -40,6 +40,20 @@ export class Arena {
         return { x: ax + abx * t, y: ay + aby * t };
     }
 
+    static constrainToRectangle(pos, radius, cx, cy, halfW, halfH) {
+        const minX = cx - halfW + radius;
+        const maxX = cx + halfW - radius;
+        const minY = cy - halfH + radius;
+        const maxY = cy + halfH - radius;
+        let x = pos.x, y = pos.y, hit = false, nx = 0, ny = 0;
+        if (x < minX) { x = minX; nx = 1; hit = true; }
+        else if (x > maxX) { x = maxX; nx = -1; hit = true; }
+        if (y < minY) { y = minY; ny = 1; hit = true; }
+        else if (y > maxY) { y = maxY; ny = -1; hit = true; }
+        if (!hit) return { position: pos, hit: false, normal: null };
+        return { position: new Vector2(x, y), hit: true, normal: new Vector2(nx, ny) };
+    }
+
     static constrainToCircle(pos, radius, cx, cy, cr, inward = true) {
         const dx = pos.x - cx;
         const dy = pos.y - cy;

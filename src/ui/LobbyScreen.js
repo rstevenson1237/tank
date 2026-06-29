@@ -9,6 +9,7 @@ const MODE_LABELS = {
 const ARENA_IDS = [
     'alpha_ring', 'geometric_cross', 'nebula_gauntlet',
     'vortex', 'the_divide', 'rubble_field', 'catacombs', 'ion_cross', 'hex_cell',
+    'grand_stadium',
 ];
 const ARENA_LABELS = {
     alpha_ring:      'Alpha Ring',
@@ -20,6 +21,7 @@ const ARENA_LABELS = {
     catacombs:       'Catacombs',
     ion_cross:       'Ion Cross',
     hex_cell:        'Hex Cell',
+    grand_stadium:   'Grand Stadium',
 };
 
 const ROSTER_IDS = ['easy', 'medium', 'hard', 'mixed', 'mayhem', 'phantom', 'blitzer', 'flanker'];

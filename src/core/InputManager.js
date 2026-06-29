@@ -5,7 +5,7 @@ const BINDINGS = [
     },
     {
         thrust: 'ArrowUp', brake: 'ArrowDown', rotateLeft: 'ArrowLeft', rotateRight: 'ArrowRight',
-        fire: 'Enter', weaponPrev: 'Numpad4', weaponNext: 'Numpad6'
+        fire: 'Enter', weaponPrev: ['Numpad4', 'BracketLeft'], weaponNext: ['Numpad6', 'BracketRight']
     },
     {
         thrust: 'KeyI', brake: 'KeyK', rotateLeft: 'KeyJ', rotateRight: 'KeyL',
@@ -47,6 +47,9 @@ export class InputManager {
     getPlayerInput(playerIndex) {
         const b = BINDINGS[playerIndex];
         if (!b) return null;
+        const jp = (code) => Array.isArray(code)
+            ? code.some(c => this.isJustPressed(c))
+            : this.isJustPressed(code);
         return {
             thrust: this.isHeld(b.thrust),
             brake: this.isHeld(b.brake),
@@ -58,8 +61,8 @@ export class InputManager {
             rotateRightJP: this.isJustPressed(b.rotateRight),
             fire: this.isJustPressed(b.fire),
             fireHeld: this.isHeld(b.fire),
-            weaponPrev: this.isJustPressed(b.weaponPrev),
-            weaponNext: this.isJustPressed(b.weaponNext)
+            weaponPrev: jp(b.weaponPrev),
+            weaponNext: jp(b.weaponNext)
         };
     }
 

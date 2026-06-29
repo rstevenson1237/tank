@@ -19,6 +19,7 @@ import { RubbleField } from './arenas/RubbleField.js';
 import { Catacombs } from './arenas/Catacombs.js';
 import { IonCross } from './arenas/IonCross.js';
 import { HexCell } from './arenas/HexCell.js';
+import { GrandStadium } from './arenas/GrandStadium.js';
 
 const GameState = {
     WELCOME: 'WELCOME',
@@ -208,6 +209,7 @@ export class Game {
             case 'catacombs':       return new Catacombs(cx, cy, r);
             case 'ion_cross':       return new IonCross(cx, cy, r);
             case 'hex_cell':        return new HexCell(cx, cy, r);
+            case 'grand_stadium':   return new GrandStadium(cx, cy, r);
             default:                return new AlphaRing(cx, cy, r);
         }
     }
